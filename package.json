@@ -1,0 +1,25 @@
+{
+  "name": "json-squash",
+  "version": "0.0.0",
+  "description": "Squash JSON-Patch operations patch into a mathematically equivalent smaller patch",
+  "main": "index.js",
+  "typings": "index.d.ts",
+  "scripts": {
+    "test": "ava -v"
+  },
+  "keywords": [
+    "json-patch"
+  ],
+  "ava": {
+    "files": ["tests/test.js", "tests/standard-tests.js"]
+  },
+  "author": "Omar Alshaker",
+  "license": "MIT",
+  "devDependencies": {
+    "ava": "^0.19.1",
+    "fast-json-patch": "^1.1.10"
+  },
+  "dependencies": {
+    "clone": "^2.1.1"
+  }
+}
