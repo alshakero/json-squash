@@ -1,17 +1,24 @@
 {
   "name": "json-squash",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Squash JSON-Patch operations patch into a mathematically equivalent smaller patch",
   "main": "index.js",
   "typings": "index.d.ts",
   "scripts": {
     "test": "ava -v"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alshakero/json-squash.git"
+  },
   "keywords": [
     "json-patch"
   ],
   "ava": {
-    "files": ["tests/test.js", "tests/standard-tests.js"]
+    "files": [
+      "tests/test.js",
+      "tests/standard-tests.js"
+    ]
   },
   "author": "Omar Alshaker",
   "license": "MIT",
