@@ -1,6 +1,6 @@
 {
   "name": "json-squash",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Squash JSON-Patch operations patch into a mathematically equivalent smaller patch",
   "main": "index.js",
   "typings": "index.d.ts",
