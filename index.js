@@ -7,7 +7,7 @@
 const clone = require('clone');
 
 function isReplaceOrAdd(operation) {
-  return ['replace', 'add'].includes(operation.op);
+  return operation.op == 'add' || operation.op == 'replace';
 }
 /**
  * Squashes a json-patch patch into a smaller one if possible
@@ -21,7 +21,7 @@ function squash(patch) {
   const patchDictionary = {};
   const resultPatch = [];
   let index = Date.now() + 1;
-  patch.forEach(operation => {
+  patch.forEach(function(operation) {
     switch (operation.op) {
       case 'add':
         // those `add`s with `-` index can have duplicates
@@ -105,9 +105,9 @@ function squash(patch) {
         if (patchDictionary[operation.path]) {
           // if have an add, copy or move in history, they (op + remove) equalize to nothing
           if (
-            ['replace', 'add', 'copy', 'replace'].includes(
+            ['replace', 'add', 'copy', 'replace'].indexOf(
               patchDictionary[operation.path].op
-            )
+            ) > -1
           ) {
             patchDictionary[operation.path] = operation; // push as is
           }
