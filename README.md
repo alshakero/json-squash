@@ -1,4 +1,4 @@
-🎃 json-squash
+# 🎃 json-squash
 ![JSON-Squash](https://cloud.githubusercontent.com/assets/17054134/26528243/59f566c6-43a7-11e7-860d-0c398c4474e1.png)
 
 > Squash JSON-Patch operations patch into a mathematically equivalent smaller patch
