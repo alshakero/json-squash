@@ -18,9 +18,11 @@ yarn add json-squash
 
 
 ## Usage:
-Using CommonJS:
+
 ```js
 const squash = require('json-squash');
+// or
+import squash from 'json-squash';
 
 const patch = [
   { "op": "add", "path": "/a/b/c", "value": 1},
@@ -33,6 +35,24 @@ const patch = [
 
 const squashed = squash(patch);
 // ==> [{ "op": "add", "path": "/a/b/d", "value": 12345 }]
+
+
+// array shift
+const obj = {arr: [1, 2, 3, 4, 5, 6]};
+obj.arr.shift();
+
+// fast-json-patch diff result
+const patch = [
+  {op: "replace", path: "/arr/0", value: 2},
+  {op: "replace", path: "/arr/1", value: 3},
+  {op: "replace", path: "/arr/2", value: 4},
+  {op: "replace", path: "/arr/3", value: 5},
+  {op: "replace", path: "/arr/4", value: 6},
+  {op: "remove", path: "/arr/5"}
+];
+
+const squashed = squash(patch);
+// ==> [{ "op": "remove", "path": "arr/0" }]
 ```
 
 ## Testing
