@@ -24,7 +24,8 @@
   "license": "MIT",
   "devDependencies": {
     "ava": "^0.19.1",
-    "fast-json-patch": "^1.1.10"
+    "fast-json-patch": "^1.1.10",
+    "jsonpatcherproxy": "0.0.9"
   },
   "dependencies": {
     "clone": "^2.1.1"

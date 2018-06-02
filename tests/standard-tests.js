@@ -12,7 +12,7 @@ const tests = clone(rawTests);
 tests.forEach(suite => {
   var suiteName = suite.comment || suite.error || JSON.stringify(suite.patch);
   test(suiteName, t => {
-    jsonpatch.apply(suite.doc, suite.patch);
+    jsonpatch.applyPatch(suite.doc, suite.patch);
     t.deepEqual(suite.doc, suite.expected);
   });
 });
@@ -23,7 +23,7 @@ testsAgain.forEach(suite => {
   var suiteName = suite.comment || suite.error || JSON.stringify(suite.patch);
   test(suiteName, t => {
     const squashed = squash(suite.patch);
-    jsonpatch.apply(suite.doc, squashed);
+    jsonpatch.applyPatch(suite.doc, squashed);
     t.deepEqual(suite.doc, suite.expected);
   });
 });

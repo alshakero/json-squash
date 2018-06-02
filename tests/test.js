@@ -9,6 +9,7 @@ import test from 'ava';
 import squash from '..';
 import jsonpatch from 'fast-json-patch';
 import clone from 'clone';
+import JSONPatcherProxy from 'jsonpatcherproxy';
 
 test('Empty patch should be returned', t => {
   const patch = [];
@@ -202,4 +203,119 @@ test('`move` should NOT deep clone', t => {
 
   // and, it should have the same references
   t.true(squashed[0].value == object);
+});
+
+test('fast-json-patch: SHALLOW array shifts should generate a single remove', t => {
+  const arr = [1, 2, 3, 4, 5, 6];
+  const observer = jsonpatch.observe(arr);
+
+  arr.shift();
+
+  const patch = jsonpatch.generate(observer);
+  const squashed = squash(patch);
+
+  // before
+  t.true(patch.length === 6);
+
+  // after
+  t.deepEqual(squashed, [{ op: 'remove', path: '/0' }]);
+});
+
+test('fast-json-patch: DEEP array shifts should generate a single remove', t => {
+  const obj = {arr: [1, 2, 3, 4, 5, 6]};
+  const observer = jsonpatch.observe(obj);
+
+  obj.arr.shift();
+
+  const patch = jsonpatch.generate(observer);
+  const squashed = squash(patch);
+
+  // before
+  t.true(patch.length === 6);
+
+  // after
+  t.deepEqual(squashed, [{ op: 'remove', path: '/arr/0' }]);
+});
+
+test('fast-json-patch: DEEP array splices should generate a single remove', t => {
+  const obj = {arr: [1, 2, 3, 4, 5, 6]};
+  const observer = jsonpatch.observe(obj);
+
+  obj.arr.splice(3,1);
+
+  const patch = jsonpatch.generate(observer);
+  const squashed = squash(patch);
+
+  // before
+  t.true(patch.length === 3);
+
+  // after
+  t.deepEqual(squashed, [{ op: 'remove', path: '/arr/3' }]);
+});
+
+test('fast-json-patch: DEEP array splices for last element should generate a single remove', t => {
+  const obj = {arr: [1, 2, 3, 4, 5, 6]};
+  const observer = jsonpatch.observe(obj);
+
+  obj.arr.splice(5,1);
+
+  const patch = jsonpatch.generate(observer);
+  const squashed = squash(patch);
+
+  // before
+  t.true(patch.length === 1);
+
+  // after
+  t.deepEqual(squashed, [{ op: 'remove', path: '/arr/5' }]);
+});
+
+test('JSONPatcherProxy: DEEP array shifts should generate a single remove', t => {
+  const obj = {arr: [1, 2, 3, 4, 5, 6]};
+  const jsonPatcherProxy = new JSONPatcherProxy(obj);
+  const proxified = jsonPatcherProxy.observe(true);
+
+  proxified.arr.shift();
+
+  const patch = jsonPatcherProxy.generate();
+  const squashed = squash(patch);
+
+  // before
+  t.true(patch.length === 6);
+
+  // after
+  t.deepEqual(squashed, [{ op: 'remove', path: '/arr/0' }]);
+});
+
+test('JSONPatcherProxy: DEEP array splices should generate a single remove', t => {
+  const obj = {arr: [1, 2, 3, 4, 5, 6]};
+  const jsonPatcherProxy = new JSONPatcherProxy(obj);
+  const proxified = jsonPatcherProxy.observe(true);
+
+  proxified.arr.splice(3,1);
+
+  const patch = jsonPatcherProxy.generate();
+  const squashed = squash(patch);
+
+  // before
+  t.true(patch.length === 3);
+
+  // after
+  t.deepEqual(squashed, [{ op: 'remove', path: '/arr/3' }]);
+});
+
+test('JSONPatcherProxy: DEEP array splices for last element should generate a single remove', t => {
+  const obj = {arr: [1, 2, 3, 4, 5, 6]};
+  const jsonPatcherProxy = new JSONPatcherProxy(obj);
+  const proxified = jsonPatcherProxy.observe(true);
+
+  proxified.arr.splice(5,1);
+
+  const patch = jsonPatcherProxy.generate();
+  const squashed = squash(patch);
+
+  // before
+  t.true(patch.length === 1);
+
+  // after
+  t.deepEqual(squashed, [{ op: 'remove', path: '/arr/5' }]);
 });

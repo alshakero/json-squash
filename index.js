@@ -6,6 +6,41 @@
  */
 const clone = require('clone');
 
+function isArraySplice(patch) {
+  // check of indices are numerical and sequential
+  for (let i = 0; i < patch.length - 1; i++) {
+    const op = patch[i];
+    const nextOp = patch[i + 1];
+
+    let hereIndex = op.path.match(/\d+$/);
+    if (!hereIndex) return false;
+
+    let nextIndex = nextOp.path.match(/\d+$/);
+    if (!nextIndex) return false;
+
+    hereIndex = Number(hereIndex);
+    nextIndex = Number(nextIndex);
+
+    if (Math.abs(hereIndex - nextIndex) !== 1) {
+      return false;
+    }
+
+    // all the operations from start to end INCONCLUSIVE should be replace
+    if (i > 0 && i < patch.length - 2 && op.op !== 'replace') {
+      return false;
+    }
+  }
+
+  // determine where the remove is (some diffs put it in the end, some in the start)
+  if (patch[0].op === 'remove') {
+    return patch[patch.length - 1].path;
+  }
+
+  if (patch[patch.length - 1].op === 'remove') {
+    return patch[0].path;
+  }
+}
+
 function isReplaceOrAdd(operation) {
   return operation.op == 'add' || operation.op == 'replace';
 }
@@ -15,9 +50,15 @@ function isReplaceOrAdd(operation) {
  * @returns {Array} The squash patch
  */
 function squash(patch) {
-  if(patch.length < 2) {
+  if (patch.length < 2) {
     return patch;
   }
+
+  let isSingleElementSplice = isArraySplice(patch);
+  if (isSingleElementSplice) {
+    return [{ op: 'remove', path: isSingleElementSplice }];
+  }
+
   const patchDictionary = {};
   const resultPatch = [];
   let index = Date.now() + 1;
@@ -71,8 +112,9 @@ function squash(patch) {
             isReplaceOrAdd(patchDictionary[operation.path])
           ) {
             // change the original operation to have the copied value and discard copy operation
-            patchDictionary[operation.path].value =
-              clone(patchDictionary[operation.from].value);
+            patchDictionary[operation.path].value = clone(
+              patchDictionary[operation.from].value
+            );
           } else {
             // we have source value, but not destination, convert it to an add, it's faster
             patchDictionary[operation.path] = {
@@ -91,9 +133,10 @@ function squash(patch) {
         e.g: add + replace = one add with the new value
         but add + test + replace = add + test + replace, we shouldn't merge add + replace in this case 
         and that's why we give the path a unique key to preserve it */
-        if(patchDictionary[operation.path]) {
+        if (patchDictionary[operation.path]) {
           ++index;
-          patchDictionary[operation.path + index] = patchDictionary[operation.path];
+          patchDictionary[operation.path + index] =
+            patchDictionary[operation.path];
           delete patchDictionary[operation.path];
         }
         // we don't want to overwrite (or be overwritten by) other operations with test operation, so we give a pseudo key
@@ -128,7 +171,7 @@ function squash(patch) {
   return newPatches;
 }
 if (typeof module !== 'undefined') {
-  Object.defineProperty(exports, "__esModule", { value: true });
+  Object.defineProperty(exports, '__esModule', { value: true });
   module.exports = squash;
   module.exports.default = squash;
 }

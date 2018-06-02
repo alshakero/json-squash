@@ -1,6 +1,6 @@
 # 🎃 json-squash
 
-> Squash JSON-Patch operations patch into a mathematically equivalent smaller patch
+> Squash JSON-Patch operations patch into a mathematically equivalent smaller patch. Shines the most for array splice and shift patches. Removing a single element from an array, whererver it is in the array, will produce a single patch 🙌
 
 ## Installation
 
