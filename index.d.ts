@@ -31,4 +31,4 @@ interface TestOperation<T> extends BaseOperation {
  * @param {Array} patch Your input patch
  * @returns {Array} The squash patch
  */
-export function squash<T>(patch: Operation[]): Operation[];
+export default function squash<T>(patch: Operation[]): Operation[];
